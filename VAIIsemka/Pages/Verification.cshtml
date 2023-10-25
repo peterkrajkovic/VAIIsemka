@@ -1,0 +1,61 @@
+﻿@page
+@model VerificationModel
+@{
+    ViewData["Title"] = "Verification";
+}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Verification Page</title>
+        <link rel="stylesheet" href="/css/verification.css"/>
+    </head>
+
+    <body>
+        <h1 class="verification-title">We have sent a mail to ****.</h1>
+        <h1 class="verification-title">Please, input verification code</h1>
+        <br/>
+
+        <div class="verification-container">
+            @for (int i = 1; i < 7; i++)
+            {
+                <!-- input obtained through mail, only numeric, 6digit -->
+                <div class="verification-bubble">
+                    <input type="number" inputmode="numeric" class="verification-input" id="verification@i" min="0" max="9" required/>
+                </div>
+            }
+            </div>
+
+        <button id="verify-button" class="verify-button" disabled>Verify</button>
+        <br/>
+        <button id="resend-button" class="resend-button">Resend Mail</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputs = document.querySelectorAll(".verification-input");
+
+            inputs.forEach((input, index) => {
+                input.addEventListener("input", (event) => {
+                    const value = event.target.value;
+                    if (value && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                // Prevent pasting into the input
+                input.addEventListener("paste", (event) => {
+                    event.preventDefault();
+                });
+            });
+
+            // When the last input is filled, enable the verify button
+            inputs[inputs.length - 1].addEventListener("input", (event) => {
+                const isFilled = inputs.every((input) => input.value.length == 1);
+                if (isFilled) {
+                    document.getElementById("verify-button").disabled = false;
+                }
+            });
+        });
+    </script>
+    </body>
+</html>
+

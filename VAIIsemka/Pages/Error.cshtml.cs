@@ -8,20 +8,15 @@ namespace VAIIsemka.Pages
     [IgnoreAntiforgeryToken]
     public class ErrorModel : PageModel
     {
-        public string? RequestId { get; set; }
+        public string ErrorMessage { get; set; } = "Unknown error.";
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-        private readonly ILogger<ErrorModel> _logger;
-
-        public ErrorModel(ILogger<ErrorModel> logger)
+        public void OnGet(string? message)
         {
-            _logger = logger;
-        }
-
-        public void OnGet()
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            if (!string.IsNullOrEmpty(message))
+            {
+                ErrorMessage = message;
+            }
         }
     }
 }

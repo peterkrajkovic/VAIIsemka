@@ -1,0 +1,50 @@
+﻿@page
+@model ClientApp.Pages.SearchModel
+@{
+    ViewData["Title"] = "Search";
+}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Search Page</title>
+        <link rel="stylesheet" href="/css/search.css">
+    </head>
+
+    <body>
+        <!-- sidebar -->
+        <div class="sidebar">
+            <a href="/Home">
+                <img src="~/images/home.png" alt="Home" class="sidebar-image">
+            </a>
+            <a href="/Profile">
+                <img src="~/images/profile.png" alt="Profile" class="sidebar-image">
+            </a>
+            <a href="/Search">
+                <img src="~/images/search.png" alt="Search" class="sidebar-image">
+            </a>
+        </div>
+
+        <!-- searchbar -->
+    <div class="searchbar">
+        <span class="searchbar-text" contenteditable="true" onfocus="clearSearchText(this)">Search</span>
+    </div>
+
+    <!-- User information -->
+    @foreach (var user in Model.Users)
+    {
+        <div class="user-info">
+            <img src="@user.Image" alt="User Image" class="user-image">
+            <div class="username">@user.Username</div>
+        </div>
+    }
+
+    <script>
+        function clearSearchText(element) {
+            if (element.innerText == "Search") {
+                element.innerText = "";
+            }
+        }
+    </script>
+    </body>
+</html>
+

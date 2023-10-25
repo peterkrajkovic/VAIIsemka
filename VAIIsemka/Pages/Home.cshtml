@@ -1,0 +1,48 @@
+﻿@page
+@model HomeModel
+@{
+    ViewData["Title"] = "Home";
+}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Home Page</title>
+        <link rel="stylesheet" href="/css/home.css"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+        
+    <body>
+        <!-- sidebar -->
+        <div class="sidebar">
+            <a href="/Home">
+                <img src="~/images/home.png" alt="Home" class="sidebar-image">
+            </a>
+            <a href="/Profile">
+                <img src="~/images/profile.png" alt="Profile" class="sidebar-image">
+            </a>
+            <a href="/Search">
+                <img src="~/images/search.png" alt="Search" class="sidebar-image">
+            </a>
+        </div>
+
+        <!-- storage for posts -->
+        <div class="content">
+                @foreach (var post in Model.Posts)
+                {
+                    <!-- One single post -->
+                    <div class="post">
+                        <h3>@post.Username</h3>
+                        </div>
+                     <div class="post-image">
+                        <img src="~/@post.Image" alt="Post Image">
+                     </div>
+                     <div class="post">
+                        <p>@post.Caption</p>
+                    </div>
+                    <div class="space"></div>
+                }
+        </div>
+    </body>
+</html>
+
+

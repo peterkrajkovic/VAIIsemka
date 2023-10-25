@@ -3,24 +3,45 @@
 @{
     ViewData["Title"] = "Error";
 }
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Error Page</title>
+        <link rel="stylesheet" href="/css/error.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+    <body>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+        <h1 class="text-error">Error.</h1>
+        <h2 class="text-error">An error occurred while processing your request,<br/> please return to the home page.</h2>
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to the <strong>Development</strong> environment displays detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+        <button id="showErrorButton" class="btn show-button">Show Error Details</button><br/>
+        <p id="errorMessage" class="text-error" style="display: none;">@Model.ErrorMessage</p>
+
+        <!-- if possible, return to homepage, if not reloads error page -->
+        <a href="/Home" class="btn btn-primary">home page</a>
+
+    <script>
+        document.getElementById("showErrorButton").addEventListener("click", function () {
+            var message = '@Model.ErrorMessage';
+            document.getElementById("errorMessage").innerText = message;
+
+            // If the error message is currently visible, hide it
+            if (document.getElementById("errorMessage").style.display === "block") {
+                document.getElementById("errorMessage").style.display = "none";
+                document.getElementById("showErrorButton").innerText = "Show Error Details";
+            } else {
+                document.getElementById("errorMessage").style.display = "block";
+                document.getElementById("showErrorButton").innerText = "Hide Error Details";
+            }
+        });
+
+        // Hide the error message when the user navigates to another page
+        window.addEventListener("beforeunload", function () {
+            document.getElementById("errorMessage").style.display = "none";
+        });
+
+    </script>
+    </body>
+</html>

@@ -1,0 +1,29 @@
+﻿@page
+@model ClientApp.Pages.ProfileModel
+@{
+    ViewData["Title"] = "Profile";
+}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Profile Page</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/profile.css">
+    </head>
+
+    <body>
+        <!-- sidebar -->
+        <div class="sidebar">
+            <a href="/Home">
+                <img src="~/images/home.png" alt="Home" class="sidebar-image">
+            </a>
+            <a href="/Profile">
+                <img src="~/images/profile.png" alt="Profile" class="sidebar-image">
+            </a>
+            <a href="/Search">
+                <img src="~/images/search.png" alt="Search" class="sidebar-image">
+            </a>
+        </div>
+
+    </body>
+</html>

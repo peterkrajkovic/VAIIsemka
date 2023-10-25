@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace VAIIsemka.Pages
+namespace WebApplication1.Pages
 {
-    public class PrivacyModel : PageModel
+    public class IndexModel : PageModel
     {
-        private readonly ILogger<PrivacyModel> _logger;
+        private readonly ILogger<IndexModel> _logger;
 
-        public PrivacyModel(ILogger<PrivacyModel> logger)
+        public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
         }
 
         public void OnGet()
         {
+
         }
     }
 }

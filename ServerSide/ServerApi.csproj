@@ -7,16 +7,24 @@
     <UserSecretsId>0145d7db-5fdd-4735-82ee-aec73dff61e8</UserSecretsId>
   </PropertyGroup>
 
+
   <ItemGroup>
+    <PackageReference Include="AntiXSS" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SendWithBrevo" Version="1.0.0" />
     <PackageReference Include="sib_api_v3_sdk" Version="4.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Files\" />
   </ItemGroup>
 
 </Project>

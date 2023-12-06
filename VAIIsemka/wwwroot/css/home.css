@@ -18,7 +18,6 @@ html, body {
 }
 
 .sidebar {
-    min-height: 100px;
     height: 100%;
     max-width: 80px;
     width: 10%;
@@ -26,19 +25,20 @@ html, body {
     top: 0;
     left: 0;
     background-color: #8A2BE2;
-    padding: 20px;
 }
+
     .sidebar a {
         color: white;
-        width:fit-content;
+        width: fit-content;
         text-decoration: none;
-        text-align:center;
+        text-align: center;
         display: block;
     }
-    .sidebar-image {
-        width: 100%; 
-        height: auto; 
-    }
+
+.sidebar-image {
+    width: 100%;
+    height: auto;
+}
 
 .content {
     width:40%;

@@ -8,8 +8,11 @@
 
 html, body {
     height: 100%;
+    display: flex;
     width: 100%;
-    place-items: center;
+    margin:0;
+    align-items: center;
+    justify-content: center;
     background: -webkit-linear-gradient(left, #003366,#004080,#0059b3, #0073e6);
 }
 
@@ -19,6 +22,7 @@ html, body {
 }
 
 .wrapper {
+    align-items:center;
     overflow: hidden;
     max-width: 390px;
     background: #fff;
@@ -210,11 +214,12 @@ form .btn {
         font-weight: 500;
         cursor: pointer;
     }
-
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    color: #fff;
-    text-align: center;
+.password-container {
+    display: flex;
+    align-items: center;
 }
+
+    .password-container input {
+        margin-right: 5px;
+    }
+

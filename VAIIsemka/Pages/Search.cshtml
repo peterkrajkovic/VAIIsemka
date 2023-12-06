@@ -26,17 +26,20 @@
 
         <!-- searchbar -->
     <div class="searchbar">
-        <span class="searchbar-text" contenteditable="true" onfocus="clearSearchText(this)">Search</span>
-    </div>
+        <span class="searchbar-text"  contenteditable="true" onfocus="clearSearchText(this)">Search</span>
+    
 
     <!-- User information -->
     @foreach (var user in Model.Users)
     {
-        <div class="user-info">
-            <img src="@user.Image" alt="User Image" class="user-image">
-            <div class="username">@user.Username</div>
-        </div>
+        <br/>
+            <div class="user-info">
+                <img src="~/images/home.png" alt="User Image" class="user-image">
+                <p class="username">@user.Username</p>
+            </div>
+
     }
+    </div>
 
     <script>
         function clearSearchText(element) {

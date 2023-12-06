@@ -1,6 +1,6 @@
-﻿using static System.Net.Mime.MediaTypeNames;
 
-namespace ClientApp.Functions
+
+namespace ServerApi.Functions
 {
     public class Classes
     {
@@ -10,7 +10,7 @@ namespace ClientApp.Functions
             public string Username { get; set; }
 
             public User(string image, string username)
-            { 
+            {
                 Image = image;
                 Username = username;
             }

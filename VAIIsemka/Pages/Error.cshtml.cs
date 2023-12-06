@@ -4,8 +4,6 @@ using System.Diagnostics;
 
 namespace VAIIsemka.Pages
 {
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    [IgnoreAntiforgeryToken]
     public class ErrorModel : PageModel
     {
         public string ErrorMessage { get; set; } = "Unknown error.";

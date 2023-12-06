@@ -7,7 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Inde.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ServerSide\ServerApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Inde.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
 
 </Project>

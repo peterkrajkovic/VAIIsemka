@@ -6,24 +6,174 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Profile Page</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/css/profile.css">
-    </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 shrink-to-fit=no">
+        <title>Profile</title>
+        <link rel="stylesheet" href="/css/signIn.css">
+    <style>
+        #successPopup {
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .close {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #000;
+        }
+
+        .modal-body {
+            font-size: 16px;
+        }
+    </style>
+</head>
 
     <body>
-        <!-- sidebar -->
-        <div class="sidebar">
-            <a href="/Home">
-                <img src="~/images/home.png" alt="Home" class="sidebar-image">
-            </a>
-            <a href="/Profile">
-                <img src="~/images/profile.png" alt="Profile" class="sidebar-image">
-            </a>
-            <a href="/Search">
-                <img src="~/images/search.png" alt="Search" class="sidebar-image">
-            </a>
+    
+    <div class="wrapper">
+        <!-- Popup HTML -->
+        <div id="successPopup">
+            <div class="modal-header">
+                <h5 class="modal-title">Email Successfully Verified</h5>
+                <button class="close" onclick="closePopup()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Now let's create your profile.</p>
+            </div>
         </div>
 
+        <div class="title-text">
+            <div class="title">Profile</div>
+        </div>
+
+        <!-- storage for forms -->
+        <div class="form-container">
+
+            <div class="form-inner">
+                    <!-- login form -->
+                <form method="post" class="prof">
+                    <div class="field">
+                        <input type="text" name="Name" placeholder="Name" required>
+                    </div>
+                    @if (TempData.ContainsKey("MessageName"))
+                    {
+                        <div class="message" style="color: red;">
+                            @TempData["MessageName"]
+                        </div>
+                    }
+                    <div class="field">
+                        <input type="text" name="Username" placeholder="Username" required>
+                    </div>
+                    @if (TempData.ContainsKey("MessageUsername"))
+                    {
+                        <div class="message" style="color: red;">
+                            @TempData["MessageUsername"]
+                        </div>
+                    }
+                    <div class="field">
+                        <input type="date" name="DateOfBirth" placeholder="Date of Birth" required>
+                    </div>
+                    <div class="field">
+                        <label for="Country">Country:</label>
+                        <select id="Country" name="Country" required>
+                            @foreach (var country in Model.Countries)
+                            {
+                                <option value="@country">@country</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="field" id="profilePictureContainer" style="display: flex; align-items: center;">
+                        <!-- Button with embedded image to trigger file input -->
+                        <label for="profilePictureInput" style="cursor: pointer;">
+                            <button type="button" onclick="triggerProfilePictureInput()">
+                                <img src="/images/profile.png" alt="Profile Picture" id="selectedImage" style="max-width:100px; max-height:100px">
+                               
+                            </button>
+                        </label>
+                        <input type="file" id="profilePictureInput" name="ProfilePicture" accept="image/*" style="display: none;" onchange="displaySelectedImage()">
+                    </div>
+                    <br/>
+                    <div class="field btn">
+                        <div class="btn-layer"></div>
+                        <input type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @if (Model.ShowPopUp)
+    {
+        <script>
+            console.log("ShowPopUp is true. Displaying popup.");
+            // Show the success popup when the page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            showPopup();
+        });
+        document.addEventListener("click", function (event) {
+                closePopup();
+        });
+        // Function to show the popup
+        function showPopup() {
+            var popup = document.getElementById("successPopup");
+            popup.style.display = "block";
+        }
+
+        // Function to close the popup
+        function closePopup() {
+            var popup = document.getElementById("successPopup");
+            popup.style.display = "none";
+        }
+        
+    </script>
+    }
+    <script>
+
+        // Function to trigger the hidden file input when the button is clicked
+        function triggerProfilePictureInput() {
+            document.getElementById('profilePictureInput').click();
+        }
+
+        // Function to display the selected image
+        function displaySelectedImage() {
+            var input = document.getElementById('profilePictureInput');
+            var image = document.getElementById('selectedImage');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    image.src = e.target.result;
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
     </body>
 </html>
+
+
+
+

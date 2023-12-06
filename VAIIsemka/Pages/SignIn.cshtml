@@ -6,6 +6,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 shrink-to-fit=no">
         <title>SignIn Page</title>
         <link rel="stylesheet" href="/css/signIn.css">
     </head>
@@ -30,13 +31,19 @@
 
             <div class="form-inner">
                     <!-- login form -->
-                    <form method="post" class="login">
+                <form method="post" class="login" asp-page-handler="Login">
                     <div class="field">
                         <input type="text" name="LoginAddress" placeholder="Email Address" required>
                     </div>
                     <div class="field">
                         <input type="password" name="LoginPassword" placeholder="Password" required>
                     </div>
+                    @if (TempData.ContainsKey("MessageLogin"))
+                    {
+                        <div class="message" style="color: red;">
+                            @TempData["MessageLogin"]
+                        </div>
+                    }
                     <div class="pass-link"><a href="#">Forgot password?</a></div>
                     <div class="field btn">
                         <div class="btn-layer"></div>
@@ -46,16 +53,24 @@
 
                 <!-- SignUp form -->    
                 </form>
-                    <form method="post" class="signup">
+                    <form method="post" class="signup" asp-page-handler="SignUp">
                     <div class="field">
-                        <input type="text" placeholder="Email Address" required>
+                        <input type="text" name="Email" placeholder="Email Address" required>
                     </div>
                     <div class="field">
-                        <input type="password" placeholder="Password" required>
+                        <input type="password" name="Password" placeholder="Password" required>
+
                     </div>
+                    
                     <div class="field">
-                        <input type="password" placeholder="Confirm password" required>
+                        <input type="password" name="ConfirmPassword" placeholder="Confirm password" required>
                     </div>
+                    @if (TempData.ContainsKey("MessageSignUp"))
+                    {
+                        <div class="message" style="color: red;">
+                            @TempData["MessageSignUp"]
+                        </div>
+                    }
                     <div class="field btn">
                         <div class="btn-layer"></div>
                         <input type="submit" value="Signup">
@@ -70,6 +85,14 @@
         const loginBtn = document.querySelector("label.login");
         const signupBtn = document.querySelector("label.signup");
         const signupLink = document.querySelector("form .signup-link a");
+        // Check TempData to determine which form to show
+        const showSignupForm = @(TempData.ContainsKey("ShowSignupForm") && (bool)TempData["ShowSignupForm"] ? "true" : "false");
+
+        if (showSignupForm) {
+            loginForm.style.marginLeft = "-50%";
+            loginText.style.marginLeft = "-50%";
+            signupBtn.click();
+        }
 
         //when clicked show other form
         signupBtn.onclick = (() => {

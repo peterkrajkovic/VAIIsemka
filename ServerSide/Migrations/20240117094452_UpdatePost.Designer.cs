@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServerApi.Database;
 
@@ -11,9 +12,10 @@ using ServerApi.Database;
 namespace ServerApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240117094452_UpdatePost")]
+    partial class UpdatePost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,33 +23,6 @@ namespace ServerApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("Classes.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Comment");
-                });
 
             modelBuilder.Entity("Classes.Follow", b =>
                 {
@@ -68,26 +43,6 @@ namespace ServerApi.Migrations
                     b.ToTable("Follow");
                 });
 
-            modelBuilder.Entity("Classes.Like", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Like");
-                });
-
             modelBuilder.Entity("Classes.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -99,23 +54,9 @@ namespace ServerApi.Migrations
                     b.Property<string>("Caption")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CommentCount")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("Image1")
+                    b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("Image2")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("Image3")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int>("LikeCount")
-                        .HasColumnType("int");
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
@@ -129,7 +70,7 @@ namespace ServerApi.Migrations
                     b.ToTable("Post");
                 });
 
-            modelBuilder.Entity("Classes.Session", b =>
+            modelBuilder.Entity("Classes.Process", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,7 +90,7 @@ namespace ServerApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Session");
+                    b.ToTable("Process");
                 });
 
             modelBuilder.Entity("Classes.Test", b =>

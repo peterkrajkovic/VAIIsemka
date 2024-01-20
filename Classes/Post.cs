@@ -13,10 +13,16 @@ namespace Classes
         [Key]
         public int Id { get; set; }
         [ForeignKey("User")]
-        public int Id_User { get; set; }
+        public string Username { get; set; }
         public string? Caption { get; set; }
         public string? Location { get; set; }
         [Required]
-        public byte[] Image { get; set; }
+        public int LikeCount { get; set; }
+        [Required]
+        public int CommentCount { get; set; }
+        [Required]
+        public byte[] Image1 { get; set; }
+        public byte[] Image2 { get; set; }
+        public byte[] Image3 { get; set; }
     }
 }

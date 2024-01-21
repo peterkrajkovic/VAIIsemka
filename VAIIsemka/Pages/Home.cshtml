@@ -62,19 +62,6 @@
             </div>
         </div>
     </nav>
-    <!-- Sidebar for small screens -->
-    <div class="container-fluid d-md-none">
-        <div class="row">
-            <div class="col-12">
-                <ul class="list-group">
-                    @foreach (var post in Model.Posts)
-                    {
-                        <li class="list-group-item">@post.Username</li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
 
     <div class="row row-cols-3 mt-4" >
             @foreach (var post in Model.Posts)

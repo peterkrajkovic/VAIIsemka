@@ -8,7 +8,6 @@ namespace ServerApi.Functions
 {
     public class SignInFunctions
     {
-        // DbSet properties for entities: Verification, User, Process
         public static string? VerifyCode(string code)
         {
             using (DataContext db = new DataContext())

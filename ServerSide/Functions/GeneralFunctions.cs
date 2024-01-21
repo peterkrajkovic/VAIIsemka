@@ -7,6 +7,7 @@ namespace ServerApi.Functions
     {
         public static int GenerateRandomCode()
         {
+            //6-digit code for verification
             Random random = new Random();
             int code = random.Next(100000, 1000000);
             return code;

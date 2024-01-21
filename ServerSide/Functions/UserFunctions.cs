@@ -139,11 +139,26 @@ namespace ServerApi.Functions
         {
             using (var context = new DataContext())
             {
-                var userId = context.Session.Where(x => x.Guid == guid).FirstOrDefault()?.Id_User;
-                var userToDelete = context.User.FirstOrDefault(u => u.Id == userId);
-
+                var user = context.Session.Where(x => x.Guid == guid).FirstOrDefault();
+                var userToDelete = context.User.FirstOrDefault(u => u.Id == user.Id);
                 if (userToDelete != null)
                 {
+                    var follow = context.Follow.Where(x => x.Id_Follower == user.Id || x.Id_Following == user.Id);
+                    foreach (var item in follow)
+                    {
+                        context.Follow.Remove(item);
+                    }
+                    var likes = context.Like.Where(x => x.Username == userToDelete.Username);
+                    foreach (var item in likes)
+                    {
+                        context.Remove(item);
+                    }
+                    var posts = context.Post.Where(x => x.Username == userToDelete.Username);
+                    foreach (var item in posts)
+                    {
+                        context.Remove(item);
+                    }
+                    context.Session.Remove(user);
                     context.User.Remove(userToDelete);
                     context.SaveChanges();
 

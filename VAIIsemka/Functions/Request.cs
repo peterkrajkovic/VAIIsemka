@@ -53,12 +53,10 @@ namespace ClientApp.Functions
                 HttpResponseMessage response = await client.PostAsync(endpoint, content);
                 if (response.IsSuccessStatusCode)
                 {
-                    //return await response.Content.ReadAsAsync<T>();
                     return default;
                 }
                 else
                 {
-                    Console.WriteLine($"Error: {response.StatusCode}");
                     return default(T);
                 }
             }

@@ -24,11 +24,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="max-height:150px; width:auto"></button>
                 </div>
                 <div class="modal-body mt-2">
-                    <img id="modalImage" class="img-fluid" alt="Post Image">
-                    <button id="modalLikes" class="btn btn-primary"></button>
+                    <img id="modalImage" class="img-fluid" alt="Post Image"><br/>
+                    <button  id="modalLikes" class="btn btn-primary mt-2"></button>
                     <button id="likeButton" onclick="like()" class="btn btn-primary"></button>
                     <br/>
-                    <button id="modalComments" class="btn btn-primary"></button>
                     @if (Model.IsMe) {
                          <button id="modalDelete" type="button" onclick="deletePost()" class="btn btn-primary bg-danger">Delete</button>
                     }
@@ -165,7 +164,6 @@
             $('#modalLocation').text('At: ' + location);
             $('#modalCaption').text(caption);
             $('#modalLikes').text('Likes: ' + likes);
-            $('#modalComments').text('Comments: '  + comments);
             $('#modalId').text(postId);
             var guid = '@Model.Guid';
             $.ajax({

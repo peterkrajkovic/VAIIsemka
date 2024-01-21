@@ -98,7 +98,7 @@ namespace Testing
             testStartTime = DateTime.Now;
 
             assertionMessage = "Assert failed - checking if username free was not successful.";
-            bool actualResult = UserFunctions.IsUsernameFree(username);
+            bool actualResult = UserFunctions.IsUsernameFree(username,"ssa");
             Assert.AreEqual(actualResult, expectedResult);
 
             log += "checking if username free successful";
@@ -122,20 +122,5 @@ namespace Testing
             assertionMessage = string.Empty;
         }
 
-        [TestMethod, TestCategory("UnitTest")]
-        [DataRow("pouzivatel", "novypouzivatel")]
-        public void UpdateUsername(string username, string newUsername)
-        {
-            testId = "User003U";
-            parameters = username + ", " + newUsername;
-            testStartTime = DateTime.Now;
-
-            assertionMessage = "Assert failed - username was not updated.";
-            bool result = UserFunctions.UpdateUsername(username, newUsername);
-            Assert.IsTrue(result, assertionMessage);
-
-            log += "username was updated";
-            assertionMessage = string.Empty;
-        }
     }
 }

@@ -7,18 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\Inde.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\Classes\Classes.csproj" />
     <ProjectReference Include="..\ServerSide\ServerApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Pages\Inde.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
 

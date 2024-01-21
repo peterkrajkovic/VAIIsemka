@@ -7,10 +7,12 @@ namespace ServerApi.Database
     {
         public DbSet<User> User { get; set; }
         public DbSet<Post> Post { get; set; }
+        public DbSet<Like> Like { get; set; }
+        public DbSet<Comment> Comment { get; set; }
         public DbSet<Test> Test { get; set; }
         public DbSet<Verification> Verification { get; set; }
         public DbSet<Follow> Follow { get; set; }
-        public DbSet<Process> Process { get; set; }
+        public DbSet<Session> Session { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var configuration = new ConfigurationBuilder()

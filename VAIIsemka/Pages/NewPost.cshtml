@@ -1,0 +1,181 @@
+﻿@page
+@model ClientApp.Pages.NewPostModel
+@{
+    ViewData["Title"] = "New Post";
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profile</title>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-md bg-dark">
+        <div class="container-xxl">
+            <a href="#intro" class="navbar-brand">
+                <span class="fw-bold text-white">
+                    Spark
+                </span>
+            </a>
+            <!-- toggle button-->
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!--navbar links-->
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="navbar-nav ms-auto align-items-end">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-page="/About" asp-route-handler="OnGet" asp-route-guid=@Model.Guid>About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-page="/Home" asp-route-handler="OnGet" asp-route-guid=@Model.Guid>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-page="/User" asp-route-handler="OnGet" asp-route-guid=@Model.Guid>Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/About">Log out</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col">
+                <div class="wrapper mx-auto">
+                    <div class="title-text">
+                        <div class="title">New Post</div>
+                    </div>
+                    <!-- storage for forms -->
+                    <div class="form-container">
+
+                        <div class="form-inner">
+                            <form method="post" enctype="multipart/form-data" asp-action="Submit">
+                                <input type="hidden" name="Guid" />
+                                <h4>Attach Pictures:</h4>
+                                <div class="row">
+                                    <div class="col-md-4" id="pictureColumn1">
+                                        <label for="pictureInput1" style="cursor: pointer;">
+                                            <button type="button" onclick="triggerPictureInput(1)">
+                                                <img src="/images/plus.png"  name="Image1" id="img1" alt="Add Picture" class="img-fluid">
+                                            </button>
+                                        </label>
+                                        <input type="file" id="pictureInput1" name="Picture1" accept="image/*" style="display: none;" onchange="displaySelectedImage(1)">
+                                    </div>
+                                    <div class="col-md-4" id="pictureColumn2">
+                                        <label for="pictureInput2" style="cursor: pointer;">
+                                            <button type="button" onclick="triggerPictureInput(2)">
+                                                <img src="/images/plus.png"  name="Image2" id="img2" alt="Add Picture" class="img-fluid">
+                                            </button>
+                                        </label>
+                                        <input type="file" id="pictureInput2" name="Picture2" accept="image/*" style="display: none;" onchange="displaySelectedImage(2)">
+                                    </div>
+                                    <div class="col-md-4" id="pictureColumn3">
+                                        <label for="pictureInput3" style="cursor: pointer;">
+                                            <button type="button" onclick="triggerPictureInput(3)">
+                                                <img src="/images/plus.png" name="Image3" id="img3" alt="Add Picture" class="img-fluid">
+                                            </button>
+                                        </label>
+                                        <input type="file" id="pictureInput3" name="Picture3" accept="image/*" style="display: none;" onchange="displaySelectedImage(3)">
+
+                                    </div>
+                                </div>
+
+                                <div class="field mb-5">
+                                    <h4 class="mb-2">Add Caption:</h4>
+                                    <input type="text" name="Caption" value="@Model.Caption" placeholder="Caption" required>
+                                </div>
+                                <div class="field mt-5">
+                                    <h4 class="mt-auto">Add Location:</h4>
+                                    <input type="text" name="Location" value="@Model.Location" placeholder="Location" required>
+                                </div>
+                                @if (TempData.ContainsKey("Message"))
+                                {
+                                    <div class="message" style="color: red;">
+                                        @TempData["Message"]
+                                    </div>
+                                }
+                                <br />
+                                <div class="field btn">
+                                    <div class="btn-layer"></div>
+                                    <input type="submit" value="Submit" asp-page-handler="Submit" class="btn btn-success">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentColumn = 1; // Variable to track the current column
+        disableColumn(2);
+        disableColumn(3);
+
+        function triggerPictureInput(number) {
+            document.getElementById('pictureInput' + number).click();
+        }
+
+        function displaySelectedImage(column) {
+            var input = document.getElementById('pictureInput' + column);
+            var image = document.getElementById('img' + column);
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    image.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+                currentColumn++;
+                enableColumn(currentColumn);
+            }
+
+        }
+
+        function deleteImage(columnId) {
+            var column = document.getElementById(columnId);
+            var images = column.getElementsByTagName('img');
+
+            // Remove the last image in the column
+            if (images.length > 0) {
+                column.removeChild(images[images.length - 1]);
+            }
+        }
+
+        function disableColumn(column) {
+            var container = document.getElementById('pictureColumn' + column);
+            container.style.display = 'none';
+
+        }
+
+        function enableColumn(column) {
+            var container = document.getElementById('pictureColumn' + column);
+            container.style.display = 'block';
+        }
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    
+
+</body>
+</html>
+
+
+
+
+
+

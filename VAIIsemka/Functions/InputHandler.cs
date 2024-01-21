@@ -27,7 +27,12 @@ namespace ClientApp.Functions
                 // Convert hash bytes to a base64-encoded string
                 string hashedPassword = Convert.ToBase64String(hashBytes);
 
-                return hashedPassword;
+                //get rid of special characters
+                string pattern = @"[^a-zA-Z0-9@.,]";
+                string replacement = "";
+                string returnString = Regex.Replace(hashedPassword, pattern, replacement);
+
+                return returnString;
             }
         }
         static byte[] ExtractLetters(byte[] inputBytes)
@@ -50,6 +55,19 @@ namespace ClientApp.Functions
             return resultBytes;
         }
 
+        public static string? IsEmail(string email)
+        {
+            //basic email format validation
+            string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+            if(Regex.IsMatch(email, pattern))
+            {
+                return null;
+            } else
+            {
+                return "Wrong email address.";
+            }
+        }
 
         public static string? IsPasswordValid(string password)
         {
@@ -65,17 +83,11 @@ namespace ClientApp.Functions
                 return "Password must contain an uppercase letter.";
             }
 
-            // Check if the password contains at least one digit
-            if (!password.Any(char.IsDigit))
-            {
-                return "Password must contain a digit.";
-            }
-
             // If all criteria are met, the password is valid
             return null;
         }
 
-        public static string? IsUsernameValid(string username)
+        public static string? IsUsernameValid(string username,string guid)
         {
             //Check username length
             if (username.Length < 6)
@@ -95,7 +107,7 @@ namespace ClientApp.Functions
                 return "Username can only contain letters, numbers, and underscores.";
             }
 
-            if (!Calls.IsUsernameFree(username))
+            if (!Calls.IsUsernameFree(username, guid).Result)
             {
                 return "Username is already used";
             }

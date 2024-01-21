@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ServerApi.Database;
 using ServerApi.Functions;
+using System;
 
 namespace ServerApi.Controllers
 {
@@ -11,69 +14,89 @@ namespace ServerApi.Controllers
         [HttpGet("SignIn/{address},{password}")]
         public async Task<string?> LoginAsync(string address, string password)
         {
-            string add = InputHandler.SanitizeInputString(ref address);
-            string pas = InputHandler.SanitizeInputString(ref password);
+            string? add = InputHandler.SanitizeInputString(ref address);
+            string? pas = InputHandler.SanitizeInputString(ref password);
             if (!String.IsNullOrEmpty(add) && !String.IsNullOrEmpty(pas) && InputHandler.IsEmail(ref add))
             {
-                return Functions.User.Login(add, pas);
+                return Functions.SignInFunctions.Login(add, pas);
             }
             return null;
         }
         [HttpGet("SignUp/{address},{password}")]
-        public async Task<bool> SignUpAsync(string address, string password)
+        public async Task<string?> SignUpAsync(string address, string password)
         {
-            string add = InputHandler.SanitizeInputString(ref address);
-            string pas = InputHandler.SanitizeInputString(ref password);
+            string? add = InputHandler.SanitizeInputString(ref address);
+            string? pas= InputHandler.SanitizeInputString(ref password);
             if (!String.IsNullOrEmpty(add) && !String.IsNullOrEmpty(pas) && InputHandler.IsEmail(ref add))
             {
-                await Functions.User.VerifyAsync(add, pas);
+                return await Functions.SignInFunctions.SignUpAsync(add, pas);
+            }
+            return null;
+        }
+
+        [EnableCors]
+        [HttpGet("Resend/{email}")]
+        public async Task<bool> ResendAsync(string email)
+        {
+            string? mail = InputHandler.SanitizeInputString(ref email);
+            if (!String.IsNullOrEmpty(mail) && InputHandler.IsEmail(ref mail))
+            {
+                await Functions.UserFunctions.Resend(mail);
                 return true;
             }
             return false;
         }
         [HttpGet("Verify/{code}")]
-        public async Task<string?> VerifyAsync(string code)
+        public async Task<string> VerifyAsync(string code)
         {
-            string co = InputHandler.SanitizeInputString(ref code);
+            string? co = InputHandler.SanitizeInputString(ref code);
             if (!String.IsNullOrEmpty(co))
             {
-                return Functions.User.VerifyCode(co);
+                return Functions.SignInFunctions.VerifyCode(co);
             }
             return null;
         }
+
         [HttpGet("CheckGuid/{guid}")]
         public async Task<bool> CheckGuidAsync(string guid)
         {
-            string gu = InputHandler.SanitizeInputString(ref guid);
+            string? gu = InputHandler.SanitizeInputString(ref guid);
             if (!String.IsNullOrEmpty(gu) && InputHandler.IsGuid(ref gu))
             {
-                return Functions.User.CheckGuid(gu);
+                return true;
             }
             return false;
         }
 
-        [HttpGet("LogOut/{guid}")]
-        public async Task<bool> LogOutAsync(string guid)
+        [EnableCors]
+        [HttpGet("ForgotPassword")]
+        public IActionResult ForgotPassword(string email)
         {
-            string gu = InputHandler.SanitizeInputString(ref guid);
-            if (!String.IsNullOrEmpty(gu) && InputHandler.IsGuid(ref gu))
+            var mail = InputHandler.SanitizeInputString(ref email);
+            if (InputHandler.IsEmail(ref email))
             {
-                return await Functions.User.LogOut(gu);
-            }
-            return false;
+                SignInFunctions.SendForgotPasswordMailAsync(mail);
+                return new JsonResult("Email sent successfully! Please, check your email.");
+            } 
+            return new JsonResult("Email not sent.");
+            
         }
-        [HttpPost("UpdateProfile")]
-        public async Task<bool> UpdateProfileAsync(string guid, string name, string username, string date, byte[]? picture)
+
+        [HttpGet("PasswordRecovery/{email},{password}")]
+        public Task<string?> PasswordRecovery(string email, string password)
         {
-            string gu = InputHandler.SanitizeInputString(ref guid);
-            string nam = InputHandler.SanitizeInputString(ref name);
-            string dat = InputHandler.SanitizeInputString(ref date);
-            string usernam = InputHandler.SanitizeInputString(ref username);
-            if (!String.IsNullOrEmpty(gu) && InputHandler.IsGuid(ref gu) && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(username))
+            var mail = InputHandler.SanitizeInputString(ref email);
+            var passwd = InputHandler.SanitizeInputString(ref password);
+            if (InputHandler.IsEmail(ref email))
             {
-                return Functions.User.UpdateProfile(gu,nam, usernam, dat, picture);
+                return Task.FromResult<string?>(SignInFunctions.PasswordRecovery(mail, passwd));
             }
-            return false;
+            return Task.FromResult<string?>(null);
+
         }
+
+
+        
+       
     }
 }

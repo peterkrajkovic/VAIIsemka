@@ -41,7 +41,7 @@ namespace ServerApi.Mails
             }
         }
 
-        internal async Task<string> Send(string recipient, string htmlBody, string subject)
+        public async Task<string> Send(string recipient, string htmlBody, string subject)
         {
             Configuration.Default.AddApiKey("api-key", apiKey);
             var apiInstance = new TransactionalEmailsApi();

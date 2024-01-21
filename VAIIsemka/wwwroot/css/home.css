@@ -17,29 +17,6 @@ html, body {
     color: #fff;
 }
 
-.sidebar {
-    height: 100%;
-    max-width: 80px;
-    width: 10%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #8A2BE2;
-}
-
-    .sidebar a {
-        color: white;
-        width: fit-content;
-        text-decoration: none;
-        text-align: center;
-        display: block;
-    }
-
-.sidebar-image {
-    width: 100%;
-    height: auto;
-}
-
 .content {
     width:40%;
     background-color: white;
@@ -47,7 +24,7 @@ html, body {
     text-align: left;
 }
 
-.post-image img{
+.post-image img {
     margin-left:15%;
     width: 70%; 
     height:auto;
@@ -55,4 +32,10 @@ html, body {
 .space {
     margin:20px;
 }
+.swiper-container {
+    overflow: hidden;
+}
 
+.swiper-slide:not(.swiper-slide-active) {
+    display: none;
+}

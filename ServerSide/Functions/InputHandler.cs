@@ -1,7 +1,7 @@
 ﻿using Microsoft.Security.Application;
 using System.Text.RegularExpressions;
 
-namespace ServerApi.Controllers
+namespace ServerApi.Functions
 {
     public class InputHandler
     {
@@ -21,7 +21,7 @@ namespace ServerApi.Controllers
 
         public static bool IsEmail(ref string email)
         {
-            // Regular expression for a basic email format validation
+            //basic email format validation
             string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
             return Regex.IsMatch(email, pattern);

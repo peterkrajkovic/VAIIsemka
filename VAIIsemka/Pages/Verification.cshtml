@@ -8,68 +8,156 @@
     <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Verification Page</title>
-        <link rel="stylesheet" href="/css/verification.css"/>
+        
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/verification.css" />
     </head>
 
     <body>
-        <h1 class="verification-title">We have sent a mail to ****.</h1>
-        <h1 class="verification-title">Please, input verification code</h1>
-        <br/>
-    <form method="post" asp-page-handler="Verify">
-        <div class="verification-container">
-            @for (int i = 1; i < 7; i++)
-            {
-                <!-- input obtained through mail, only numeric, 6digit -->
-                <div class="verification-bubble">
-                    <input type="number" inputmode="numeric" class="verification-input" name="verification@(i)" id="verification@(i)" min="0" max="9" required />
+
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">Email Resend</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            }
+                <div class="modal-body">
+                    <p id="MessageText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
         </div>
-            @if (TempData.ContainsKey("Message"))
-            {
-                <br/>
-                <div class="message" style="color: red;">
-                    @TempData["Message"]
-                </div>
-            }
-            
-        <button type="submit" asp-page-handler="Verify" id="verify-button" class="verify-button">Verify</button>
-        <br />
-        <button type="submit" asp-page-handler="Resend" id="resend-button" class="resend-button">Resend Mail</button>
-        </form>
+    </div>
 
-   
+    <nav class="navbar navbar-expand-md bg-dark">
+        <div class="container-xxl">
+            <a href="#intro" class="navbar-brand">
+                <span class="fw-bold text-white">
+                    Spark
+                </span>
+            </a>
+            <!-- toggle button-->
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const inputs = document.querySelectorAll(".verification-input");
+            <!--navbar links-->
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="navbar-nav ms-auto align-items-end">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/Index">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/SignIn">Login</a>
+                    </li>
 
-            inputs.forEach((input, index) => {
-                input.addEventListener("input", (event) => {
-                    const value = event.target.value;
-                    if (value.length > 1) {
-                        event.target.value = value.slice(0, 1);
-                    }
-                    if (value && index < inputs.length - 1) {
-                        inputs[index + 1].focus();
-                    }
-                });
-
-                // Prevent pasting into the input
-                input.addEventListener("paste", (event) => {
-                    event.preventDefault();
-                });
-            });
-
-            // When the last input is filled, enable the verify button
-            inputs[inputs.length - 1].addEventListener("input", (event) => {
-                const isFilled = inputs.every((input) => input.value.length == 1);
-                if (isFilled) {
-                    document.getElementById("verify-button").disabled = false;
+                </ul>
+            </div>
+        </div>
+    </nav>
+        <div class="container-sm">
+        <h1 class="verification-title text-white mt-4">We have sent a mail to @Model.Email.</h1>
+        <h1 class="verification-title text-white">Please, input verification code</h1>
+        <br/>
+        <form method="post" asp-page-handler="Verify">
+            <div class="verification-container">
+                @for (int i = 1; i < 7; i++)
+                {
+                    <!-- input obtained through mail, only numeric, 6digit -->
+                    <div class="verification-bubble">
+                        <input type="number" inputmode="numeric" class="verification-input" name="verification@(i)" id="verification@(i)" min="0" max="9" required />
+                    </div>
                 }
+            </div>
+                @if (TempData.ContainsKey("Message"))
+                {
+                    <br/>
+                    <div class="message" style="color: red;">
+                        @TempData["Message"]
+                    </div>
+                }
+            
+            <button type="submit" asp-page-handler="Verify" id="verify-button" class="verify-button">Verify</button>
+            <br />
+        </form>
+        <button type="button" class="resend-button" onclick="resendEmail()" id="resend-button">Resend Mail</button>
+        <span id="countdown" class="text-white" style="display:none;"></span>
+    </div>
+
+        <script>
+
+            function resendEmail() {
+                // Get the email input value
+                var email = '@Model.Email';
+
+                // Make an AJAX request to the server
+                $.ajax({
+                    type: "GET",
+                    url: "https://localhost:7271/api/SignIn/Resend/" + email,
+                    success: function (response) {
+                        var MessageElement = document.getElementById('MessageText');
+                        MessageElement.textContent = 'Email resent. Please check your email address.';
+                        $('#successModal').modal('show');
+                    }
+                });
+            document.getElementById("resend-button").disabled = true;
+
+            // Show the countdown
+            var countdownElement = document.getElementById("countdown");
+            countdownElement.style.display = "inline";
+
+            // Set the countdown duration
+            var countdownDuration = 10;
+            var countdownInterval = setInterval(function () {
+                countdownElement.textContent = " Resend in " + countdownDuration + " seconds";
+
+                if (countdownDuration <= 0) {
+                    // Enable the button
+                    document.getElementById("resend-button").disabled = false;
+                    countdownElement.style.display = "none";
+                    clearInterval(countdownInterval);
+                }
+
+                countdownDuration--;
+            }, 1000);
+            
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const inputs = document.querySelectorAll(".verification-input");
+
+                inputs.forEach((input, index) => {
+                    input.addEventListener("input", (event) => {
+                        const value = event.target.value;
+                        if (value.length > 1) {
+                            event.target.value = value.slice(0, 1);
+                        }
+                        if (value && index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    });
+
+                    // Prevent pasting into the input
+                    input.addEventListener("paste", (event) => {
+                        event.preventDefault();
+                    });
+                });
+
+                // When the last input is filled, enable the verify button
+                inputs[inputs.length - 1].addEventListener("input", (event) => {
+                    const isFilled = inputs.every((input) => input.value.length == 1);
+                    if (isFilled) {
+                        document.getElementById("verify-button").disabled = false;
+                        document.getElementById("verify-button").click();
+                    }
+                });
             });
-        });
-    </script>
+
+        </script>
     </body>
 </html>
 

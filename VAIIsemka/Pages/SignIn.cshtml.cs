@@ -1,21 +1,16 @@
 ﻿using ClientApp.Functions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace VAIIsemka.Pages
 {
+    [BindProperties]
     public class SignInModel : PageModel
     {
-        [BindProperty]
         public string? LoginAddress { get; set; }
-        [BindProperty]
         public string? LoginPassword { get; set; }
-        [BindProperty]
         public string? ConfirmPassword { get; set; }
-        [BindProperty]
         public string? Password { get; set; }
-        [BindProperty]
         public string? Email { get; set; }
 
 
@@ -26,7 +21,7 @@ namespace VAIIsemka.Pages
 
         public async Task<IActionResult?> OnPostLogin()
         {
-            string? guid = await Calls.Login(LoginAddress, LoginPassword);
+            string? guid = await Calls.Login(LoginAddress!, InputHandler.HashPassword(LoginPassword!,LoginAddress!));
             if (!string.IsNullOrEmpty(guid))
             {
                 return RedirectToPage("/Home", new { guid = guid});
@@ -35,17 +30,18 @@ namespace VAIIsemka.Pages
             return null;
 
         }
-        public async Task<IActionResult?> OnPostSignUpAsync()
+        public async Task<IActionResult?> OnPostSignUp()
         {
-            string? valid = InputHandler.IsPasswordValid(Password);
+            string? valid = InputHandler.IsPasswordValid(Password!);
+            valid += InputHandler.IsEmail(Email!);
             if (String.IsNullOrEmpty(valid))
             {
                 if (Password == ConfirmPassword)
                 {
-                    string ex = await Calls.SignUpAsync(Email, Password);
+                    string? ex = await Calls.SignUpAsync(Email!, InputHandler.HashPassword(Password!, Email!));
                     if (String.IsNullOrEmpty(ex))
                     {
-                        return RedirectToPage("/Verification");
+                        return RedirectToPage("/Verification", new { email = Email });
                     }
                     else
                     {

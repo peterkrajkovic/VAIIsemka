@@ -3,46 +3,160 @@
 @{
     ViewData["Title"] = "Home";
 }
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
-    <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Home Page</title>
-        <link rel="stylesheet" href="/css/home.css"> 
-    </head>
-        
-    <body>
-        <!-- sidebar -->
-        <div class="sidebar">
-            <a href="/Home">
-                <img src="~/images/home.png" alt="Home" class="sidebar-image">
-            </a>
-            <a href="/Profile">
-                <img src="~/images/profile.png" alt="Profile" class="sidebar-image">
-            </a>
-            <a href="/Search">
-                <img src="~/images/search.png" alt="Search" class="sidebar-image"> 
-            </a>
-        </div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
 
-        <!-- storage for posts -->
-        <div class="content">
-                @foreach (var post in Model.Posts)
-                {
-                    <!-- One single post -->
-                    <div class="post">
-                        <h3>@post.Username</h3>
+    <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="postModalLabel">Post Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="max-height:150px; width:auto"></button>
+                </div>
+                <div class="modal-body mt-2">
+                    <img id="modalImage" class="img-fluid" alt="Post Image">
+                    <button id="modalLikes" class="btn btn-primary"></button>
+                    <button id="likeButton" onclick="like()" class="btn btn-primary"></button>
+                    <p id="modalId" class="visually-hidden"/>
+                    <p id="modalLocation" class="card-text text-muted"></p>
+                    <p id="modalCaption" class="card-text font-weight-bold"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-md bg-dark">
+        <div class="container-xxl">
+            <a href="#intro" class="navbar-brand">
+                <span class="fw-bold text-white">
+                    Spark
+                </span>
+            </a>
+            <!-- toggle button-->
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!--navbar links-->
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="navbar-nav ms-auto align-items-end">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-page="/About" asp-route-handler="OnGet" asp-route-guid=@Model.Guid >About</a>
+                    </li>
+                        <li class="nav-item">
+                        <a class="nav-link text-white" asp-page="/User" asp-route-handler="OnGet" asp-route-guid=@Model.Guid>Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/About">Log out</a>
+                        </li>
+                        
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Sidebar for small screens -->
+    <div class="container-fluid d-md-none">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-group">
+                    @foreach (var post in Model.Posts)
+                    {
+                        <li class="list-group-item">@post.Username</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-3 mt-4" >
+            @foreach (var post in Model.Posts)
+            {
+                <div class="col-md-4 col-6">
+                <div class="card mb-4" data-bs-toggle="modal" data-bs-target="#postModal" onclick="displayPost('@Convert.ToBase64String(post.Image1)', '@post.Location' , '@post.Caption','@post.LikeCount', '@post.CommentCount', '@post.Id.ToString()')">
+                    <h4 class="card-text">
+                            <a asp-page="/User" asp-page-handler="OnGet" asp-route-guid="@Model.Guid" asp-route-username="@post.Username">
+                                @post.Username
+                            </a>
+                    </h4>
+                        <img src="data:image/png;base64,@Convert.ToBase64String(post.Image1)" class="card-img-top" style="height: 250px; width: 100%; object-fit: cover;" alt="Post Image">
+                        <div class="card-body">
+                            <h6 class="card-text text-muted">At: @post.Location</h6>
+                            <p class="card-text font-weight-bold">@post.Caption</p>
                         </div>
-                     <div class="post-image">
-                        <img src="~/@post.Image" alt="Post Image">
-                     </div>
-                     <div class="post">
-                        <p>@post.Caption</p>
                     </div>
-                    <div class="space"></div>
+                </div>
+            }
+    </div>
+
+   
+    <script>
+
+        function displayPost(image, location, caption, likes, comments, postId) {
+            $('#modalImage').attr('src', 'data:image/png;base64,' + image);
+            $('#modalLocation').text('At: ' + location);
+            $('#modalCaption').text(caption);
+            $('#modalLikes').text('Likes: ' + likes);
+            $('#modalId').text(postId);
+            var guid = '@Model.Guid';
+            $.ajax({
+                url: "https://localhost:7271/api/User/IsLiked",
+                method: 'GET',
+                data: { postId: postId, guid: guid },
+                success: function (result) {
+                    $('#likeButton').text(result);
                 }
-        </div>
-    </body>
+            });
+            $.ajax({
+                url: "https://localhost:7271/api/User/GetLikes",
+                method: 'GET',
+                data: { postId: postId },
+                success: function (result) {
+                    $('#modalLikes').text('Likes: ' + result);
+                },
+                error: function () {
+                    console.error('Failed to like post.');
+                }
+            });
+            // Show the modal
+            $('#postModal').modal('show');
+        }
+
+        function like() {
+            var postId = $('#modalId').text();
+            var guid = '@Model.Guid';
+            $.ajax({
+                url: "https://localhost:7271/api/User/ChangeLike",
+                method: 'GET',
+                data: { postId: postId, guid: guid },
+                success: function (result) {
+                    $('#likeButton').text(result);
+                    $.ajax({
+                        url: "https://localhost:7271/api/User/GetLikes",
+                        method: 'GET',
+                        data: { postId: postId },
+                        success: function (result) {
+                            $('#modalLikes').text('Likes: ' + result);
+                        }
+                    });
+                },
+                error: function () {
+                    console.error('Failed to like post.');
+                }
+            });
+
+           
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+</body>
 </html>
-
-

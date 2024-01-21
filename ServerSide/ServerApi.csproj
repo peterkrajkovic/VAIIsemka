@@ -7,6 +7,10 @@
     <UserSecretsId>0145d7db-5fdd-4735-82ee-aec73dff61e8</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="C:\Users\petok\.nuget\packages\sendwithbrevo\1.0.0\contentFiles\any\net7.0\logo.ico" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="AntiXSS" Version="4.3.0" />
@@ -25,6 +29,10 @@
 
   <ItemGroup>
     <Folder Include="Files\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Classes\Classes.csproj" />
   </ItemGroup>
 
 </Project>

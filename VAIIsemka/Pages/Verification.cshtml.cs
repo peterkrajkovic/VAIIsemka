@@ -6,8 +6,12 @@ namespace VAIIsemka.Pages
 {
     public class VerificationModel : PageModel
     {
-        public void OnGet()
+        public string Email { get; set; }
+        public string? Page { get; set; }
+        public void OnGet(string email, string? page)
         {
+            Email = email;
+            Page = page;
         }
 
 
@@ -25,12 +29,16 @@ namespace VAIIsemka.Pages
                 TempData["Message"] = "Wrong verification code.";
                 return null;
             }
-            return RedirectToPage("/Profile", new { guid = guid, firstTime = true });
+
+            if (!String.IsNullOrEmpty(Page))
+            {
+                return RedirectToPage("/" + Page, new { guid = guid });
+            }
+            else
+            {
+                return RedirectToPage("/Profile", new { guid = guid, firstTime = true });
+            }
         }
 
-        public async Task<IActionResult?> OnPostResend()
-        {
-            return null;
-        }
     }
 }

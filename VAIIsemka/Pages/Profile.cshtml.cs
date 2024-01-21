@@ -1,68 +1,78 @@
+using Classes;
 using ClientApp.Functions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System;
 using System.Diagnostics.Metrics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ClientApp.Pages
 {
+    [BindProperties]
     public class ProfileModel : PageModel
     {
-        [BindProperty]
         public string? Name { get; set; }
-        [BindProperty]
         public string? Username { get; set; }
-        [BindProperty]
-        public DateTime? Date { get; set; }
-        [BindProperty]
-        public string? Country { get; set; }
-
-        [BindProperty]
+        public DateTime? DateOfBirth { get; set; }
+        public string? Bio { get; set; }
         public IFormFile? ProfilePicture { get; set; }
         public bool ShowPopUp { get; set; } = false;
-        public List<string> Countries { get; set; } = new List<string>
+        public string Guid { get; set; }
+
+        public async Task<IActionResult?> OnGet(string guid, bool? firstTime)
         {
-            "Andorra", "United Arab Emirates", "Afghanistan", "Antigua and Barbuda", "Albania", "Armenia", "Angola", "Argentina", "Austria", "Australia", "Azerbaijan", "Bosnia and Herzegovina",
-            "Barbados", "Bangladesh", "Belgium", "Burkina Faso", "Bulgaria", "Bahrain", "Burundi", "Benin", "Brunei Darussalam", "Bolivia (Plurinational State of)", "Brazil", "Bahamas", "Bhutan", "Botswana",
-            "Belarus", "Belize", "Canada", "Democratic Republic of the Congo", "Central African Republic", "Congo", "Switzerland", "Côte d'Ivoire", "Chile", "Cameroon", "China", "Colombia", "Costa Rica",
-            "Cuba", "Cape Verde", "Cyprus", "Czech Republic", "Germany", "Djibouti", "Denmark", "Dominica", "Dominican Republic", "Algeria", "Ecuador", "Estonia", "Egypt", "Eritrea", "Spain", "Ethiopia",
-            "Finland", "Fiji", "Micronesia (Federated States of)", "France", "Gabon", "United Kingdom of Great Britain and Northern Ireland", "Grenada", "Georgia", "Ghana", "Gambia", "Guinea", "Equatorial Guinea",
-            "Greece", "Guatemala", "Guinea-Bissau", "Guyana", "Honduras", "Croatia", "Haiti", "Hungary", "Indonesia", "Ireland", "Israel", "India", "Iraq", "Iran (Islamic Republic of)", "Iceland", "Italy",
-            "Jamaica", "Jordan", "Japan", "Kenya", "Kyrgyzstan", "Cambodia", "Kiribati", "Comoros", "Saint Kitts and Nevis", "Democratic People's Republic of Korea", "Republic of Korea", "Kuwait", "Kazakhstan",
-            "Lao People's Democratic Republic", "Lebanon", "Saint Lucia", "Liechtenstein", "Sri Lanka", "Liberia", "Lesotho", "Lithuania", "Luxembourg", "Latvia", "Libyan Arab Jamahiriya", "Morocco", "Monaco",
-            "Republic of Moldova", "Montenegro", "Madagascar", "Marshall Islands", "The former Yugoslav Republic of Macedonia", "Mali", "Myanmar", "Mongolia", "Mauritania", "Malta", "Mauritius", "Maldives",
-            "Malawi", "Mexico", "Malaysia", "Mozambique", "Namibia", "Niger", "Nigeria", "Nicaragua", "Netherlands", "Norway", "Nepal", "Nauru", "New Zealand", "Oman", "Panama", "Peru", "Papua New Guinea",
-            "Philippines", "Pakistan", "Poland", "Portugal", "Palau", "Paraguay", "Qatar", "Romania", "Serbia", "Russian Federation", "Rwanda", "Saudi Arabia", "Solomon Islands", "Seychelles", "Sudan", "Sweden",
-            "Singapore", "Slovenia", "Slovakia", "Sierra Leone", "San Marino", "Senegal", "Somalia", "Suriname", "South Sudan", "Sao Tome and Principe", "El Salvador", "Syrian Arab Republic", "Swaziland", "Chad",
-            "Togo", "Thailand", "Tajikistan", "Timor-Leste", "Turkmenistan", "Tunisia", "Tonga", "Turkey", "Trinidad and Tobago", "Tuvalu", "United Republic of Tanzania", "Ukraine", "Uganda", "United States of America",
-            "Uruguay", "Uzbekistan", "Saint Vincent and the Grenadines", "Venezuela (Bolivarian Republic of)", "Viet Nam", "Vanuatu", "Samoa", "Yemen", "South Africa", "Zambia", "Zimbabwe"
-        };
-        private string guid;
-        public async Task<IActionResult> OnGet(string guid, bool firstTime)
-        {
-            if (!String.IsNullOrEmpty(guid) &&await Calls.CheckGuid(guid))
+            if (!String.IsNullOrEmpty(guid) && await Calls.CheckGuid(guid))
             {
-                this.guid = guid;
-                if (firstTime)
+                Guid = guid;
+                var user = await Calls.GetUser(guid);
+                if (user != null)
+                {
+                    Name = user.Name;
+                    Username = user.Username;
+                    Bio = user.Bio;
+                    DateOfBirth = user.Date;
+                    if (user.Picture != null && user.Picture.Length > 0)
+                    {
+                        ProfilePicture = ConvertToFormFile(user.Picture);
+                    }
+                }
+                if (firstTime != null && (bool)firstTime)
                 {
                     this.ShowPopUp = true;
-                } else 
-                { 
-                    this.ShowPopUp = false; 
                 }
-                return Page();
+                else
+                {
+                    this.ShowPopUp = false;
+                }
+                TempData["Guid"] = Guid;
+                return null;
             }
             else
             {
-                return RedirectToPage("/Error", new { message = "You need to login to access this site." });
+                return RedirectToPage("/SignIn");
+            }
+        }
+        private IFormFile ConvertToFormFile(byte[] data)
+        {
+            // Create a MemoryStream from the byte array
+            using (var stream = new MemoryStream(data))
+            {
+                // Create an IFormFile from the MemoryStream
+                return new FormFile(stream, 0, data.Length, "ProfilePicture", "ProfilePicture.jpg");
             }
         }
 
         public async Task<IActionResult?> OnPostSubmit()
         {
-            bool proper = true;
-            if (!String.IsNullOrEmpty(Name) && !String.IsNullOrEmpty(Username) && Date.HasValue)
+            if (Guid == null)
             {
-                string? valid = InputHandler.IsUsernameValid(Username);
+                Guid = TempData["Guid"].ToString();
+            }
+            bool proper = true;
+            if (!String.IsNullOrEmpty(Name) && !String.IsNullOrEmpty(Username) && DateOfBirth.HasValue)
+            {
+                string? valid = InputHandler.IsUsernameValid(Username, Guid);
                 if (!String.IsNullOrEmpty(valid))
                 {
                     TempData["MessageUsername"] = valid;
@@ -75,7 +85,8 @@ namespace ClientApp.Pages
                     TempData["MessageName"] = valid;
                     proper = false;
                 }
-            } else
+            }
+            else
             {
                 proper = false;
             }
@@ -90,11 +101,41 @@ namespace ClientApp.Pages
                     {
                         await ProfilePicture.CopyToAsync(stream);
                         data = stream.ToArray();
-                       }
+                    }
                 }
-                if (await Calls.UpdateProfile(guid, Name!, Username!, (DateTime)Date!, Country!, data))
+                if (Bio == null)
                 {
-                    return RedirectToPage("/Home");
+                    Bio = string.Empty;
+                }
+
+                using (var formData = new MultipartFormDataContent())
+                {
+                    formData.Add(new StringContent(Guid!), "guid");
+                    formData.Add(new StringContent(Name!), "name");
+                    formData.Add(new StringContent(Username!), "username");
+                    formData.Add(new StringContent(DateOfBirth.ToString()!), "date");
+                    formData.Add(new StringContent(Bio!), "bio");
+                    if (data != null)
+                    {
+                        formData.Add(new ByteArrayContent(data), "image", "image.jpg");
+                    }
+                    await Calls.UpdateProfile(formData);
+                    return RedirectToPage("/User", new { guid = Guid });
+                }
+                
+            }
+            return null;
+        }
+
+        public IActionResult? UsernameChanged()
+        {
+            if (!string.IsNullOrEmpty(Username))
+            {
+                var result = Calls.IsUsernameFree(Username, Guid);
+                if (result != null && !result.Result)
+                {
+                    TempData["MessageUsername"] = "Username is not available.";
+                    TempData["Guid"] = Guid;
                 }
             }
             return null;

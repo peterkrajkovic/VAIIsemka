@@ -1,29 +1,10 @@
-﻿
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-html, body {
-    display: grid;
-    height: 100%;
-    width: 100%;
-    place-items: center;
+﻿html, body {
     background: -webkit-linear-gradient(left, #003366, #004080, #0059b3, #0073e6);
 }
 
 ::selection {
     background: #1a75ff;
     color: #fff;
-}
-
-h1.verification-title {
-    font-size: 24px;
-    color: #fff;
-    margin-bottom: 20px;
-    text-align: center;
 }
 
 .verification-container {

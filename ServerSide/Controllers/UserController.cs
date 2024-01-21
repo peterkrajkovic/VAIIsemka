@@ -20,7 +20,7 @@ namespace ServerApi.Controllers
             string? usernam = InputHandler.SanitizeInputString(ref username);
             if (!String.IsNullOrEmpty(gu) && InputHandler.IsGuid(ref gu) && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(username))
             {
-                return Task.FromResult(Functions.UserFunctions.UpdateProfile(gu, nam, usernam, dat,bio, picture));
+                return Task.FromResult(Functions.UserFunctions.UpdateProfile(gu, nam, usernam, dat, bio, picture));
             }
             return Task.FromResult(false);
         }
@@ -87,7 +87,7 @@ namespace ServerApi.Controllers
             }
             return null;
         }
-        
+
         [HttpGet("GetUser/{guid}")]
         public ActionResult<User?>? GetUser(string guid)
         {
@@ -117,6 +117,7 @@ namespace ServerApi.Controllers
         {
             return UserFunctions.GetFollowersNumber(username);
         }
+
         [HttpGet("FollowingsNumber/{username}")]
         public string? FollowingsNumber(string username)
         {
@@ -143,13 +144,13 @@ namespace ServerApi.Controllers
             if (InputHandler.IsGuid(ref gui))
             {
                 return UserFunctions.DeleteUser(gui);
-            } else
+            }
+            else
             {
                 return null;
             }
 
         }
-
 
         [HttpGet("IsUsernameFree/{username},{guid}")]
         public bool IsUsernameFree(string username, string guid)

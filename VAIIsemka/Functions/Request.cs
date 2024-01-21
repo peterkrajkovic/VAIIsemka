@@ -43,7 +43,7 @@ namespace ClientApp.Functions
             }
             catch
             {
-                return default(T?);
+                return default;
             }
         }
         public static async Task<T?> PostAsync<T>(string endpoint, HttpContent content)

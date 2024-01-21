@@ -26,7 +26,7 @@ namespace ServerApi.Controllers
         public async Task<string?> SignUpAsync(string address, string password)
         {
             string? add = InputHandler.SanitizeInputString(ref address);
-            string? pas= InputHandler.SanitizeInputString(ref password);
+            string? pas = InputHandler.SanitizeInputString(ref password);
             if (!String.IsNullOrEmpty(add) && !String.IsNullOrEmpty(pas) && InputHandler.IsEmail(ref add))
             {
                 return await Functions.SignInFunctions.SignUpAsync(add, pas);
@@ -47,7 +47,7 @@ namespace ServerApi.Controllers
             return false;
         }
         [HttpGet("Verify/{code}")]
-        public async Task<string> VerifyAsync(string code)
+        public async Task<string?> VerifyAsync(string code)
         {
             string? co = InputHandler.SanitizeInputString(ref code);
             if (!String.IsNullOrEmpty(co))
@@ -77,26 +77,22 @@ namespace ServerApi.Controllers
             {
                 SignInFunctions.SendForgotPasswordMailAsync(mail);
                 return new JsonResult("Email sent successfully! Please, check your email.");
-            } 
+            }
             return new JsonResult("Email not sent.");
-            
+
         }
 
         [HttpGet("PasswordRecovery/{email},{password}")]
-        public Task<string?> PasswordRecovery(string email, string password)
+        public async Task<string?> PasswordRecovery(string email, string password)
         {
             var mail = InputHandler.SanitizeInputString(ref email);
             var passwd = InputHandler.SanitizeInputString(ref password);
             if (InputHandler.IsEmail(ref email))
             {
-                return Task.FromResult<string?>(SignInFunctions.PasswordRecovery(mail, passwd));
+                return SignInFunctions.PasswordRecovery(mail, passwd);
             }
-            return Task.FromResult<string?>(null);
+            return null;
 
         }
-
-
-        
-       
     }
 }

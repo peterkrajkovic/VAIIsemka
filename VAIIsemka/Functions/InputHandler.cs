@@ -96,9 +96,9 @@ namespace ClientApp.Functions
             }
 
             // Check if the username meets a maximum length requirement (adjust as needed)
-            if (username.Length > 20)
+            if (username.Length > 40)
             {
-                return "Username cannot exceed 20 characters.";
+                return "Username cannot exceed 40 characters.";
             }
 
             // Check if the username contains only alphanumeric characters and underscores

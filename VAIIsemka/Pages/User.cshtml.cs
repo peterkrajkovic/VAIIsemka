@@ -45,8 +45,8 @@ namespace ClientApp.Pages
             }
             Guid = guid;
             TempData["Guid"] = guid;
-            Followers = await Calls.Followers(username);
-            Followings = await Calls.Followings(username);
+            Followers = await Calls.Followers(User.Username);
+            Followings = await Calls.Followings(User.Username);
             var postList = await Calls.GetPosts(User.Username!);
             if (postList != null)
             {

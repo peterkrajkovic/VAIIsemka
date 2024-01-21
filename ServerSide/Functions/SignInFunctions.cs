@@ -9,7 +9,7 @@ namespace ServerApi.Functions
     public class SignInFunctions
     {
         // DbSet properties for entities: Verification, User, Process
-        public static string VerifyCode(string code)
+        public static string? VerifyCode(string code)
         {
             using (DataContext db = new DataContext())
             {
@@ -29,10 +29,10 @@ namespace ServerApi.Functions
                     db.User.Add(new User
                     {
                         Password = password,
-                        Email = email
+                        Email = email,
+                        Username = email
                     });
                     db.SaveChanges();
-                    var us = db.User.ToList();
                     var user = db.User.Where(x => x.Email == email).FirstOrDefault();
                     if (user != null)
                     {
@@ -43,7 +43,8 @@ namespace ServerApi.Functions
                         db.SaveChanges();
 
                         return guid;
-                    } else
+                    }
+                    else
                     {
                         return null;
                     }
@@ -74,26 +75,17 @@ namespace ServerApi.Functions
                     return ("This email address is already in use.");
                 }
                 string code = GeneralFunctions.GenerateRandomCode().ToString("D6");
-
-                try
+                // Insert into Verification table
+                db.Verification.Add(new Verification
                 {
-                    // Insert into Verification table
-                    db.Verification.Add(new Verification
-                    {
-                        Email = email,
-                        Code = code,
-                        Password = password
-                    });
+                    Email = email,
+                    Code = code,
+                    Password = password
+                });
 
-                    // Save changes to the database
-                    db.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    // Log or print the exception details
-                    Console.WriteLine(ex.Message);
-                    return ex.Message;
-                }
+                // Save changes to the database
+                db.SaveChanges();
+
                 try
                 {
                     Mails.General general = Mails.General.GetInstance;
@@ -103,9 +95,9 @@ namespace ServerApi.Functions
                 {
                     return ex.Message;
                 }
-
-                return null;
             }
+
+            return null;
 
         }
         public static string? Login(string email, string password)

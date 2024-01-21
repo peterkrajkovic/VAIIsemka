@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ClientApp.Pages
 {
+    [BindProperties]
     public class PasswordRecoveryModel : PageModel
     {
         public string? Password { get; set; }
@@ -14,6 +15,7 @@ namespace ClientApp.Pages
             if (!string.IsNullOrEmpty(email))
             {
                 Email = email;
+                TempData["Email"] = Email;
                 return null;
             } else
             {
@@ -22,12 +24,17 @@ namespace ClientApp.Pages
         }
         public async Task<IActionResult?> OnPostSubmit()
         {
+            if (Email == null)
+            {
+                Email = TempData["Email"].ToString();
+            }
+
             string? valid = InputHandler.IsPasswordValid(Password!);
             if (String.IsNullOrEmpty(valid))
             {
                 if (Password == ConfirmPassword)
                 {
-                    string? guid = await Calls.PasswordRecovery(Email!, Password!);
+                    string? guid = await Calls.PasswordRecovery(Email!, InputHandler.HashPassword(Password!, Email));
                     if (!String.IsNullOrEmpty(guid))
                     {
                         return RedirectToPage("/Home", new { guid = guid });
@@ -47,6 +54,7 @@ namespace ClientApp.Pages
                 TempData["MessageSignUp"] = valid;
             }
             TempData["ShowSignupForm"] = true;
+            TempData["Email"] = Email;
             return null;
         }
     }

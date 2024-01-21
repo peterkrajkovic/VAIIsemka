@@ -38,13 +38,12 @@ namespace ServerApi.Functions
             {
                 var posts = db.Post
                     .OrderByDescending(x => x.Date)
-                    .Take(30)
                     .ToList();
                 return posts;
             }
         }
 
-        public static bool UpdateProfile(string guid, string name, string username, string date,string? bio, byte[]? picture)
+        public static bool UpdateProfile(string guid, string name, string username, string date, string? bio, byte[]? picture)
         {
             using (DataContext db = new DataContext())
             {
@@ -53,7 +52,7 @@ namespace ServerApi.Functions
                 if (user != null)
                 {
                     user.Username = username;
-                    user.Bio = bio; 
+                    user.Bio = bio;
                     user.Picture = picture;
                     user.Name = name;
                     user.Date = DateTime.Parse(date);
@@ -87,17 +86,18 @@ namespace ServerApi.Functions
 
         public static string? ChangeFollow(string guid, string username)
         {
-                using (var context = new DataContext())
+            using (var context = new DataContext())
+            {
+                var follower = context.Session.Where(x => x.Guid == guid).FirstOrDefault()?.Id_User;
+                var following = context.User.Where(x => x.Username == username).FirstOrDefault()?.Id;
+                if (context.Follow.Where(x => x.Id_Follower == follower && x.Id_Following == following).Count() > 0)
                 {
-                    var follower = context.Session.Where(x => x.Guid == guid).FirstOrDefault()?.Id_User;
-                    var following = context.User.Where(x => x.Username == username).FirstOrDefault()?.Id;
-                    if (context.Follow.Where(x => x.Id_Follower == follower && x.Id_Following == following).Count() > 0)
-                    {
-                        var fol = context.Follow.Where(x => x.Id_Follower == follower && x.Id_Following == following).First();
-                        context.Follow.Remove(fol);
-                        context.SaveChanges();
-                        return "Follow";
-                    } else
+                    var fol = context.Follow.Where(x => x.Id_Follower == follower && x.Id_Following == following).First();
+                    context.Follow.Remove(fol);
+                    context.SaveChanges();
+                    return "Follow";
+                }
+                else
                 {
                     var fol = new Follow();
                     fol.Id_Follower = (int)follower;
@@ -106,8 +106,7 @@ namespace ServerApi.Functions
                     context.SaveChanges();
                     return "Unfollow";
                 }
-                }
-            return null;
+            }
         }
 
         public static string GetFollowersNumber(string username)
@@ -132,7 +131,6 @@ namespace ServerApi.Functions
             using (DataContext db = new DataContext())
             {
                 var userId = db.Session.Where(x => x.Guid == guid).FirstOrDefault()!.Id_User;
-                var us = db.User.ToList();
                 var user = db.User.Where(x => x.Username == username && x.Id != userId).FirstOrDefault();
                 return (user == null);
             }
@@ -192,7 +190,8 @@ namespace ServerApi.Functions
                         if (context.Like.Where(x => x.PostId == id && x.Username == username).Count() > 0)
                         {
                             return "Dislike";
-                        } else
+                        }
+                        else
                         {
                             return "Like";
                         }

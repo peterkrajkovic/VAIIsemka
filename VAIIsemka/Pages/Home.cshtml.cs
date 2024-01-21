@@ -25,10 +25,5 @@ namespace VAIIsemka.Pages
             }
 
         }
-        public async Task<IActionResult> OnGetMoreImages()
-        {
-
-            return Partial("_ImageGridPartial", this);
-        }
     }
 }

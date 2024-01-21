@@ -39,11 +39,11 @@ namespace ClientApp.Pages
                 }
                 if (firstTime != null && (bool)firstTime)
                 {
-                    this.ShowPopUp = true;
+                    ShowPopUp = true;
                 }
                 else
                 {
-                    this.ShowPopUp = false;
+                    ShowPopUp = false;
                 }
                 TempData["Guid"] = Guid;
                 return null;
@@ -124,20 +124,22 @@ namespace ClientApp.Pages
                 }
                 
             }
+            TempData["Guid"] = Guid;
             return null;
         }
 
-        public IActionResult? UsernameChanged()
+        public async Task<IActionResult?> UsernameChangedAsync()
         {
             if (!string.IsNullOrEmpty(Username))
             {
-                var result = Calls.IsUsernameFree(Username, Guid);
-                if (result != null && !result.Result)
+                var result = await Calls.IsUsernameFree(Username, Guid);
+                if (!result)
                 {
                     TempData["MessageUsername"] = "Username is not available.";
-                    TempData["Guid"] = Guid;
+                    
                 }
             }
+            TempData["Guid"] = Guid;
             return null;
         }
     }

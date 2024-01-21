@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /ServerSide/Mails/appsettings.Mails.json
 /ServerSide/Database/appsettings.Database.json
 /ServerSide/Mails
+/ServerSide/Mails/appsettings.Mails.json
